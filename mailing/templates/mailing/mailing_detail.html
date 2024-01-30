@@ -1,0 +1,25 @@
+{% extends 'mailing/base.html' %}
+
+
+{% block content %}
+<div class="container">
+
+            <div class="col-md-4">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-title">
+                        <h5 class="card-title">Рассылка "{{ object.message }}"</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Дата начала рассылки - {{ object.time_start }}</p>
+                        <p class="card-text">Дата окончания рассылки - {{ object.time_start }}</p>
+                        <p class="card-text">Периодичность - {{ object.period }}</p>
+                        <p class="card-text">Статус - {{ object.status|default:"Создана" }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary" href="{% url 'mailing:update_mailing' object.pk %}">Редактировать</a>
+                    </div>
+                </div>
+            </div>
+
+</div>
+{% endblock %}
