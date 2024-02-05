@@ -30,22 +30,31 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
-    PERIODS = (
-        ('daily', 'раз в день'),
-        ('weekly', 'раз в неделю'),
-        ('monthly', 'раз в месяц'),
-    )
 
-    STATUSES = (
-        ('created', 'создана'),
-        ('started', 'выполняется'),
-        ('done', 'завершена'),
-    )
+    DAILY = 'daily'
+    WEEKLY = 'weekly'
+    MONTHLY = 'monthly'
+
+    PERIODS = [
+        (DAILY, 'раз в день'),
+        (WEEKLY, 'раз в неделю'),
+        (MONTHLY, 'раз в месяц'),
+    ]
+
+    CREATED = 'created'
+    STARTED = 'started'
+    DONE = 'done'
+
+    STATUSES = [
+        (CREATED, 'создана'),
+        (STARTED, 'выполняется'),
+        (DONE, 'завершена'),
+    ]
 
     time_start = models.DateTimeField(verbose_name='время старта')
     time_end = models.DateTimeField(verbose_name='время окончания')
-    period = models.CharField(default='daily', max_length=15, choices=PERIODS, verbose_name='периодичность')
-    status = models.CharField(default='created', max_length=15, choices=STATUSES, verbose_name='статус')
+    period = models.CharField(default=DAILY, max_length=15, choices=PERIODS, verbose_name='периодичность')
+    status = models.CharField(default=CREATED, max_length=15, choices=STATUSES, verbose_name='статус')
 
     client = models.ManyToManyField(Client, verbose_name='клиент')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='сообщение')
@@ -59,8 +68,19 @@ class Mailing(models.Model):
 
 
 class Logs(models.Model):
+
+    SENT = 'sent'
+    FAILED = 'failed'
+    PENDING = 'pending'
+
+    STATUS = [
+        (SENT, 'Отправлено'),
+        (FAILED, 'Не удалось отправить'),
+        (PENDING, 'В ожидании')
+    ]
+
     date = models.DateTimeField(auto_now_add=True, verbose_name='время последней попытки')
-    status = models.CharField(max_length=20, verbose_name='статус попытки')
+    status = models.CharField(max_length=50, choices=STATUS, default=PENDING, verbose_name='статус попытки')
     response = models.CharField(max_length=250, verbose_name='ответ почтового сервера', **NULLABLE)
 
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='рассылка', **NULLABLE)
