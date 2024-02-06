@@ -23,21 +23,9 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             send_mailing,
-            trigger=CronTrigger(second="*/10"),  # Every 10 seconds
+            trigger=CronTrigger(minute="*"),
         )
         logger.info("Added message 'send_mailing'.")
-
-        # scheduler.add_job(
-        #     send_message,
-        #     trigger=CronTrigger(second="*/10"),  # Every 10 seconds
-        # )
-        # logger.info("Added job 'my_job'.")
-        #
-        # scheduler.add_job(
-        #     send_message,
-        #     trigger=CronTrigger(second="*/10"),  # Every 10 seconds
-        # )
-        # logger.info("Added job 'my_job'.")
 
         try:
             logger.info("Starting scheduler...")

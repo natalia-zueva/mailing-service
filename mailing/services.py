@@ -2,33 +2,32 @@ from smtplib import SMTPException
 
 from django.conf import settings
 from django.core.mail import send_mail
-from datetime import datetime, timedelta
-
 from django.utils import timezone
 
 from mailing.models import Mailing, Logs
 
 
-def send_mailing(mailing: Mailing):
+def send_mailing():
     current_time = timezone.localtime(timezone.now())
-    if mailing.time_start <= current_time < mailing.time_end:
-        mailing.status = Mailing.STARTED
-        mailing.save()
-        for message in mailing.messages.all():
-            for client in mailing.clients.all():
+    mailing_list = Mailing.objects.all()
+    for mailing in mailing_list:
+        if mailing.time_start <= current_time < mailing.time_end:
+            mailing.status = Mailing.STARTED
+            mailing.save()
+            for client in mailing.client.all():
                 try:
-                    result = send_mail(
-                        subject=message.title,
-                        message=message.body,
+                    send_mail(
+                        subject=mailing.message.title,
+                        message=mailing.message.body,
                         from_email=settings.EMAIL_HOST_USER,
                         recipient_list=[client.email],
                         fail_silently=False
                     )
+
                     log = Logs.objects.create(
-                        time_try=mailing.time_start,
-                        status_try=result,
-                        response_server='OK',
-                        mailing_list=mailing,
+                        last_try=mailing.time_start,
+                        status_try='Отправлено',
+                        mailing=mailing,
                         client=client
                     )
                     log.save()
@@ -36,15 +35,15 @@ def send_mailing(mailing: Mailing):
 
                 except SMTPException as error:
                     log = Logs.objects.create(
-                        time_try=mailing.time_start,
-                        status_try=False,
-                        response_server=error,
-                        mailing_list=mailing,
-                        client=client
+                        last_try=mailing.time_to_send,
+                        status_try='Ошибка',
+                        mailling=mailing,
+                        client=client,
+                        answer=error
                     )
                     log.save()
-                return log
+                    return log
 
-    else:
-        mailing.status = Mailing.DONE
-        mailing.save()
+        else:
+            mailing.status = Mailing.DONE
+            mailing.save()
