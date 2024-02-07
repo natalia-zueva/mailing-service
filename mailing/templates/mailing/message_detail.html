@@ -1,0 +1,22 @@
+{% extends 'mailing/base.html' %}
+
+
+{% block content %}
+<div class="container">
+
+            <div class="col-md-4">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-title">
+                        <h5 class="card-title">Рассылка "{{ object.title }}"</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Текст рассылки - {{ object.body }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-primary" href="{% url 'mailing:update_message' object.pk %}">Редактировать</a>
+                    </div>
+                </div>
+            </div>
+
+</div>
+{% endblock %}
