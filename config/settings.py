@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'mailing',
     'blog',
+    'users',
 
     'django_apscheduler',
 ]
@@ -145,6 +146,7 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = True
 
+AUTH_USER_MODEL = 'users.User'
+LOGOUT_REDIRECT_URL = '/'
 
-# APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
-# APSCHEDULER_RUN_NOW_TIMEOUT = 25
+

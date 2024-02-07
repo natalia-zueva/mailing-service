@@ -24,6 +24,9 @@ class Command(BaseCommand):
         scheduler.add_job(
             send_mailing,
             trigger=CronTrigger(minute="*"),
+            id="send_mailing",
+            max_instances=1,
+            replace_existing=True,
         )
         logger.info("Added message 'send_mailing'.")
 

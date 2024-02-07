@@ -11,6 +11,9 @@ def send_mailing():
     current_time = timezone.localtime(timezone.now())
     mailing_list = Mailing.objects.all()
     for mailing in mailing_list:
+        if mailing.time_end < current_time:
+            mailing.status = Mailing.DONE
+            continue
         if mailing.time_start <= current_time < mailing.time_end:
             mailing.status = Mailing.STARTED
             mailing.save()
@@ -25,8 +28,8 @@ def send_mailing():
                     )
 
                     log = Logs.objects.create(
-                        last_try=mailing.time_start,
-                        status_try='Отправлено',
+                        date=mailing.time_start,
+                        status=Logs.SENT,
                         mailing=mailing,
                         client=client
                     )
@@ -35,13 +38,14 @@ def send_mailing():
 
                 except SMTPException as error:
                     log = Logs.objects.create(
-                        last_try=mailing.time_to_send,
-                        status_try='Ошибка',
+                        date=mailing.time_start,
+                        status=Logs.FAILED,
                         mailling=mailing,
                         client=client,
-                        answer=error
+                        response=error
                     )
                     log.save()
+
                     return log
 
         else:
