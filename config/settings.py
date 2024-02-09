@@ -148,5 +148,15 @@ EMAIL_USE_SSL = True
 
 AUTH_USER_MODEL = 'users.User'
 LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
 
+
+CACHE_ENABLED = os.getenv('CACHE_ENABLED') == 1
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv('CACHES_LOCATION'),
+    }
+}
 
